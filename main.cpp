@@ -3,88 +3,99 @@ Vards, uzvards: Paula Beatrise Valtere
 
 G20. Uzrakstit funkciju, kas ieliek saraksta elementu ar vertibu n pec pirma elementa ar vertibu m.
 
-GG.** Vismaz viena funkcija (velams, galvena) ir janoteste, izmantojot vienibtestesanu,
-kur attieciga funkcija butu japarbauda uz vismaz tris dazadiem nosacijumiem
+GG.** Vismaz viena no datu parbaudem jarealize, izmantojot iznemumsituaciju apstrades (exception handling) mehanismu.
 ****/
-
 
 #include <iostream>
 #include <list>
-#include"../../GGlist/GGlist.h"
-
+#include <algorithm>
+#include"GGlist.h"
 using namespace std;
 
-bool vai_vienads(list<int> list1,list<int> list2){          ///Funkcija sarakstu identiskuma parbaudei
+void parbaude (int s){
 
-if(list1.size()!=list2.size())return false;
+if(s<0) {throw "!!!Kluda!!! Garums nevar but negativs!";}       ///Iznemuma izmesanas bloki
+if(s==0) {throw "!!!Kluda!!! Garums nevar but 0!";}
 
-auto it=list1.begin();
-auto it2=list2.begin();
-
-for(;it!=list1.end() && it2!=list2.end();it++ , it2++) {
-        if(*it!=*it2) {
-        cout<<*it<<" "<<*it2<<endl;return false;
-        }
- }
-return true;
-}
-
-bool test_A(list<int> list1,list<int> list2){               ///Vienibtests
-
-int ko=99;
-int pecka=3;
-
-iesprauz(list1, ko,  pecka);                                ///Testejamas funkcijas izsaukums
-
-return vai_vienads(list1,list2);                            ///Sarakstu identiskuma patiesuma parbaude
-}
-
-bool test_B(list<int> list1,list<int> list2){              ///Vienibtests
-
-int ko=99;
-int pecka=5;
-
-iesprauz(list1, ko,  pecka);
-
-return vai_vienads(list1,list2);
-}
-
-bool test_C(list<int> list1,list<int> list2){           ///Vienibtests
-
-int ko=99;
-int pecka=1;
-
-iesprauz(list1, ko,  pecka);
-
-return vai_vienads(list1,list2);
-}
-
-bool test_D(list<int> list1){                           ///Vienibtests
-
-int ko=99;
-int pecka=78;
-
-
-try{(iesprauz(list1, ko,  pecka));}                    ///Iznemuma situacijas apstrades funkcija
-
-catch(int error) {if(error==0) return 1;                ///Iznemuma partversanas bloki
-                    else return 0;}
-catch(...) {return 0;}
 }
 
 int main()
 {
-    cout << "Testi:" << endl;
+    int ok=1;
+do{
+    list<int> s1;
+                                                    ///Funkcija saraksta elementu ievadei
 
-list<int>Sar={1,2,3,4,5};
-list<int>Sar2={1,1,2,3,4,5};
+    int garums;
+    int skaitlis;
+    bool nav=false;
+    bool ir=true;
 
-list<int>A={1,2,3,99,4,5};
-list<int>B={1,2,3,4,5,99};
-list<int>C={1,99,1,2,3,4,5};
+    cout<<"Ievadiet velamo saraksta garumu: ";
+    cin>>garums;
 
-cout<<test_A(Sar,A)<<endl;  ///Vienibtestu funkciju izsauksana
-cout<<test_B(Sar,B)<<endl;
-cout<<test_C(Sar2,C)<<endl;
-cout<<test_D(Sar)<<endl;
+    try {parbaude(garums);}                         ///Funkcija iznemumsituaciju parbaudei
+
+    catch(const char *e){cout<<e<<endl;ir=false;}           ///Iznemuma partversanas bloki
+    catch(...){cout<<"Nezinama kluda!"<<endl;ir=false;}
+
+    while(ir!=true){
+
+        cout<<"Ievadiet garumu velreiz:";
+        cin>>garums;
+
+            try {parbaude(garums);}
+
+            catch(const char *e){cout<<e<<endl;nav=true;}
+            catch(...){cout<<"Nezinama kluda!"<<endl;nav=true;}
+
+     if(nav!=true)ir=true;
+     nav=false;
+    }
+
+
+    for (int i=0; i < garums; i++)
+    {
+        cout<<"Ievadiet "<<i+1<<". skaitli: ";
+        cin>>skaitlis;
+        s1.push_back(skaitlis);                                              ///Saraksta elementu ievade
+    }
+    cout<<endl;
+    cout<<"Jusu ievadita saraksta vertibas: ";
+    for (auto &a: s1) { cout<<a<<" "; };                                     ///Saraksta izprintesana
+    cout<<endl;cout<<endl;
+
+		int pirmav;
+		cout<<"Kadu elementu velaties ievietot?"<<endl;
+		cin>>pirmav;
+		cout<<endl;
+		int peckura;
+		cout<<"Pec kadas elementa vertibas velaties ievietot "<<pirmav<<" ?"<<endl;
+		cin>>peckura;
+		cout<<endl;
+
+
+int ir2=0;
+
+while(ir2!=1){                                   ///Cikls vertibas eksistences parbaudei, pec kuras japievieno elements
+
+auto i = find (s1.begin(), s1.end(), peckura);
+if (i!= s1.end()) ir2=1;
+     else {cout<<"Vertiba, pec kuras velaties ievietot "<<pirmav<<" neeksiste\nIevadiet citu vertibu: ";
+     cin>>peckura;}
+    }
+
+iesprauz(s1, pirmav, peckura);                                       ///Funkcija elementa iespausanai saraksta
+
+cout<<"Jusu ievadita saraksta vertibas ar iesprausto elementu: ";
+for (auto &a: s1) { cout<<a<<" "; };
+cout<<endl;
+
+s1.clear();                                                            ///Saraksta izdzesana
+
+cout<<endl;
+cout<<"Ja velaties atkartot darbibas, spiediet '1', citadak - '0'."<<endl;
+cin>>ok;
+cout<<endl;
+}while(ok!=0);
 }
